@@ -1,0 +1,17 @@
+{
+    "name": "pondo/oauth",
+    "description": "Pondo SDK For Oauth2",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Pondo\\Oauth\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Muhammad Zulki Akbari",
+            "email": "blomenid@gmail.com"
+        }
+    ],
+    "require": {}
+}
