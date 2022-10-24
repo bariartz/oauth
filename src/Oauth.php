@@ -16,12 +16,27 @@ class OAuth
     {
         $query = http_build_query([
             'client_id' => env('PONDO_OAUTH_CLIENT_ID'),
+            'client_secret' => env('PONDO_OAUTH_CLIENT_SECRET'),
             'redirect_uri' => env('PONDO_OAUTH_REDIRECT_URI'),
             'response_type' => 'code',
             'scope' => ''
         ]);
     
-        return redirect('https://accounts.pondo.co.id/oauth/authorize?'.$query);
+        return redirect('https://accounts.pondo.co.id/login?'.$query);
+    }
+
+    public function logout()
+    {
+        $token = session('access_token');
+        $OauthToken = Http::withOptions([
+            'verify' => false
+        ])->withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $token['access_token'],
+        ])->get('https://accounts.pondo.co.id/api/user');
+
+        return $OauthToken;
     }
 
     public static function callback($code = '')
@@ -51,19 +66,19 @@ class OAuth
             'access_token' => $token['access_token']
         ];
 
+        session(['access_token' => $token['access_token']]);
         return $jsonResponse;
     }
 
-    public static function getCustomers($access_token, $params)
+    public static function getUsers($params)
     {
-        $customers = Http::withOptions([
+        $users = Http::withOptions([
             'verify' => false
         ])->withHeaders([
             'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . $access_token
-        ])->get('https://dev.pondo.co.id/api/customers?' . $params);
+            'Content-Type' => 'application/json'
+        ])->get('https://dev.pondo.co.id/api/users?' . $params);
 
-        return $customers;
+        return $users;
     }
 }
